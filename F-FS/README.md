@@ -49,15 +49,30 @@ The system consists of three main components:
 ## 📂 Project Structure
 
 ```
-/master        → Metadata & coordination
-/chunkserver   → Storage nodes
-/shadow        → Read-only replica
-/protocol      → Networking & framing
-/messages      → RPC message definitions
-/storage       → OpLog & checkpointing
-/network       → TCP abstraction
-/utils         → Logging, configs
-/bin           → Executables
+f-fs/
+
+/services/
+   master/
+   chunkserver/
+   shadow/
+
+/core/
+   network/
+   serialization/
+   messages/
+   rpc/
+
+/storage/
+   oplog/
+   checkpoint/
+
+/infra/
+   concurrency/
+   utils/
+
+/raft/   (future)
+
+/bin/
 ```
 
 ---
