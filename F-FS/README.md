@@ -50,29 +50,54 @@ The system consists of three main components:
 
 ```
 f-fs/
+├── bin/                        # Executables (Entry Points)
+│   ├── master_main.cpp         # Main loop for Master
+│   ├── chunkserver_main.cpp    # Main loop for ChunkServer
+│   ├── shadow_main.cpp         # Main loop for Shadow Master
+│   └── client_cli.cpp          # CLI tool for user operations
+│
+├── core/                       # Shared Internal Logic
+│   ├── network/                # TCP/Socket wrappers
+│   │   ├── connection.hpp/cpp  # sendFrame/receiveFrame logic
+│   │   └── server.hpp/cpp      # TCP listen/accept loop
+│   ├── serialization/          # Converting structs to bytes
+│   │   └── codec.hpp           # Header-only encoder/decoder
+│   ├── messages/               # RPC Contracts
+│   │   ├── types.hpp           # ChunkHandle, ChunkLocation structs
+│   │   └── commands.hpp        # Message enums (CREATE_FILE, etc.)
+│   └── rpc/                    # RPC routing
+│       └── dispatcher.hpp      # Routes messages to handlers
+│
+├── services/                   # Business Logic (The "Brains")
+│   ├── master/                 # Master-specific logic
+│   │   ├── master_logic.hpp    # Metadata management
+│   │   └── lease_manager.hpp   # Granting/revoking leases
+│   ├── chunkserver/            # ChunkServer-specific logic
+│   │   ├── storage_engine.hpp  # Local disk read/write
+│   │   └── replication_hub.hpp # CS-to-CS data forwarding
+│   └── shadow/                 # Replication logic
+│       └── oplog_streamer.hpp  # Catch-up & Live streaming
+│
+├── storage/                    # Persistence Layer
+│   ├── oplog/                  # Append-only metadata log
+│   │   └── log_manager.hpp/cpp
+│   └── checkpoint/             # State snapshots
+│       └── snapshotter.hpp/cpp
+│
+├── infra/                      # Low-level Foundation
+│   ├── concurrency/            # Threading and Locks
+│   │   └── namespace_lock.hpp  # Hierarchical path locking
+│   └── utils/                  # Helper tools
+│       ├── checksum.hpp        # CRC32 calculations
+│       └── config.hpp          # YAML/INI configuration parser
+│
+├── tests/                      # Testing Suite
+│   ├── unit/                   # Tests for single components
+│   └── integration/            # Tests for full service flows
+│
+└── CMakeLists.txt              # Build system configuration
 
-/services/
-   master/
-   chunkserver/
-   shadow/
-
-/core/
-   network/
-   serialization/
-   messages/
-   rpc/
-
-/storage/
-   oplog/
-   checkpoint/
-
-/infra/
-   concurrency/
-   utils/
-
-/raft/   (future)
-
-/bin/
+FUTURE SCOPE:- ADD RAFT
 ```
 
 ---
